@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./src",
+		"checkJs": true,
+		"jsx": "react-jsx",
+		"target": "es2022",
+		"moduleResolution": "node"
+	}
+}
