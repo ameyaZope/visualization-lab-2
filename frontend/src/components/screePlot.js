@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
-function ScreePlot({ handleIntrinsicDimensionalityIndexChange }) {
+function ScreePlot({ intrinsicDimensionalityIndex,
+	handleIntrinsicDimensionalityIndexChange }) {
 	const screePlotSvgRef = useRef();
 	useEffect(() => {
 		// set the dimensions and margins of the graph
@@ -83,7 +84,14 @@ function ScreePlot({ handleIntrinsicDimensionalityIndexChange }) {
 				.join("rect")
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
-				.attr("fill", "steelblue")
+				.attr("fill", (d, i) => {
+					if (i + 1 == intrinsicDimensionalityIndex) {
+						return "crimson"
+					}
+					else {
+						return "steelblue"
+					}
+				})
 				// no bar at the beginning thus:
 				.attr("height", d => height - y(0)) // always equal to 0
 				.attr("y", d => y(0))
@@ -102,7 +110,19 @@ function ScreePlot({ handleIntrinsicDimensionalityIndexChange }) {
 				})
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).transition().attr('fill', 'steelblue');
+					d3.select(this).transition().attr('fill', (d) => {
+						let currBarNum = 0;
+						for (let i = 0; i < screePlotData['eigenvalues'].length; i++) {
+							if (d == screePlotData['eigenvalues'][i]) {
+								if (i + 1 == intrinsicDimensionalityIndex) {
+									return "crimson"
+								}
+								else {
+									return "steelblue"
+								}
+							}
+						}
+					});
 				})
 				.on('click', function (event) {
 					for(let i=0;i<screePlotData['eigenvalues'].length;i++) {
@@ -121,7 +141,7 @@ function ScreePlot({ handleIntrinsicDimensionalityIndexChange }) {
 				.attr("height", d => height - y(d));
 		})
 
-	}, [])
+	}, [intrinsicDimensionalityIndex])
 
 	return (
 		<svg width={600} height={600} id='screePlot' ref={screePlotSvgRef} />

@@ -24,7 +24,7 @@ function HomePage() {
 		<Container>
 			<Grid>
 				<Grid xs={12} item={true} alignItems="center" justifyContent="center">
-					<ScreePlot handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange}/>
+					<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange}/>
 					<Biplot numClusters={numClusters} />
 					<KMeansBarChart handleNumClusterChange={handleNumClusterChange} />
 					<ScatterplotMatrix numClusters={numClusters} numPrincipleComponents={intrinsicDimensionalityIndex}/>
