@@ -98,7 +98,7 @@ function Biplot({ numClusters = 3 }) {
 				.append("circle")
 				.attr("cx", function (d) {
 					// Return position with optional jitter
-					return x(d['pcs'][0]);
+					return x(0);
 				})
 				.attr("cy", function (d) {
 					// Return position with optional jitter
@@ -126,6 +126,13 @@ function Biplot({ numClusters = 3 }) {
 					tooltip.html(``).style('visibility', 'hidden');
 					d3.select(this).transition().style('fill', color(d['clusters'][numClusters - 1])); // Use the original fill color
 				})
+
+			svg.selectAll("circle")
+				.transition()
+				.delay(function (d, i) { return (i * 3) })
+				.duration(2000)
+				.attr("cx", function (d) { return x(d['pcs'][0]); })
+				.attr("cy", function (d) { return y(d['pcs'][1]); })
 
 			// Legend setup
 			var legendSpace = 20; // Spacing between legend items
