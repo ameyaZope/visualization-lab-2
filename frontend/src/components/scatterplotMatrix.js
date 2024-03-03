@@ -26,7 +26,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 
 			// Define the color scale.
 			const color = d3.scaleOrdinal()
-				.domain(data['display_data'].map(d => d['clusters'][numClusters]))
+				.domain(data['display_data'].map(d => d['clusters'][numClusters-1]))
 				.range(d3.schemeCategory10);
 
 			// Define the horizontal axis (it will be applied separately for each column).
@@ -96,7 +96,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			const circle = cell.selectAll("circle")
 				.attr("r", 3.5)
 				.attr("fill-opacity", 0.7)
-				.attr("fill", (d) => { return color(d['clusters'][numClusters]) });
+				.attr("fill", (d) => { return color(d['clusters'][numClusters-1]) });
 
 			//brushing logic 
 			function brush(cell, circle, svg, { padding, size, x, y, columns }) {
