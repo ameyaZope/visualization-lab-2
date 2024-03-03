@@ -11,7 +11,7 @@ function Biplot({ numClusters = 3 }) {
 
 		// below line clears the svg so that next graph can be drawn on it, 
 		// else there is overlap of graphs
-		var svgSelected = d3.select("#plot");
+		var svgSelected = d3.select("#biPlot");
 		svgSelected.selectAll("*").remove();
 
 		// append the svg object to the body of the page
