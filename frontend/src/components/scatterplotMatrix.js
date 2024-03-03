@@ -197,7 +197,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 	}, [numClusters, numPrincipleComponents])
 
 	return (
-		<svg width={1500} height={1500} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
+		<svg width={1500} height={1000} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
 	)
 }
 
