@@ -85,19 +85,10 @@ function Biplot({ numClusters = 3 }) {
 				.style('color', '#fff')
 				.text('a simple tooltip');
 
-			const colors = [
-				"#7B68EE", // Medium Slate Blue
-				"#8FBC8F", // Dark Sea Green
-				"#DAA520", // Golden Rod
-				"#20B2AA", // Light Sea Green
-				"#778899", // Light Slate Gray
-				"#B0C4DE", // Light Steel Blue
-				"#FFD700", // Gold
-				"#C71585", // Medium Violet Red
-				"#A52A2A", // Brown
-				"#4682B4"  // Steel Blue
-			];
-
+			// Define the color scale.
+			const color = d3.scaleOrdinal()
+				.domain(biPlotData['display_data'].map(d => d['clusters'][numClusters - 1]))
+				.range(d3.schemeCategory10.slice(0, numClusters));
 
 			// Add dots
 			svg.append('g')
@@ -114,8 +105,9 @@ function Biplot({ numClusters = 3 }) {
 					return y(d['pcs'][1]);
 				})
 				.attr("r", 5)
+				.attr("fill-opacity", 0.7)
 				.attr("fill", function (d) {
-					return colors[d['clusters'][numClusters - 1]]
+					return color(d['clusters'][numClusters - 1])
 				})
 				.on('mouseover', function (event, data) {
 					tooltip
@@ -132,7 +124,7 @@ function Biplot({ numClusters = 3 }) {
 				})
 				.on('mouseout', function (event, d) {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).transition().style('fill', colors[d['clusters'][numClusters - 1]]); // Use the original fill color
+					d3.select(this).transition().style('fill', color(d['clusters'][numClusters - 1])); // Use the original fill color
 				})
 
 			// Legend setup
@@ -145,7 +137,7 @@ function Biplot({ numClusters = 3 }) {
 
 			// Add one dot in the legend for each name
 			var legend = svg.selectAll("legend")
-				.data(colors)
+				.data(color.range())
 				.enter()
 				.append("g")
 				.attr("transform", function (d, i) { return "translate(0," + i * legendSpace + ")"; });
@@ -156,7 +148,7 @@ function Biplot({ numClusters = 3 }) {
 				.attr("y", 0)
 				.attr("width", legendRectSize)
 				.attr("height", legendRectSize)
-				.style("fill", function (d, i) { return colors[i]; });
+				.style("fill", function (d) { return d; });
 
 			// Add the text labels to the legend
 			legend.append("text")
