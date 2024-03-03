@@ -15,6 +15,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			const padding = 28;
 			const columns = [1, 2, 3, 4, 5, 6, 7].slice(0, numPrincipleComponents)
 			const size = (width - (columns.length + 1) * padding) / columns.length + padding;
+			const margin = { top: 30, right: 100, bottom: 90, left: 90 }
 
 			// Define the horizontal scales (one for each row).
 			const x = columns.map(c => d3.scaleLinear()
@@ -23,11 +24,6 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 
 			// Define the companion vertical scales (one for each column).
 			const y = x.map(x => x.copy().range([size - padding / 2, padding / 2]));
-
-			// Define the color scale.
-			const color = d3.scaleOrdinal()
-				.domain(data['display_data'].map(d => d['clusters'][numClusters-1]))
-				.range(d3.schemeCategory10);
 
 			// Define the horizontal axis (it will be applied separately for each column).
 			const axisx = d3.axisBottom()
@@ -57,9 +53,46 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			// append the svg object to the body of the page
 			var svg = d3.select(scatterplotMatrixSvgRef.current)
 				.append("svg")
-				.attr("width", width)
-				.attr("height", height)
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+				.attr("transform",
+					"translate(" + margin.left + "," + margin.top + ")")
 				.attr("viewBox", [-padding, 0, width, height]);
+
+			// Define the color scale.
+			const color = d3.scaleOrdinal()
+				.domain(data['display_data'].map(d => d['clusters'][numClusters - 1]))
+				.range(d3.schemeCategory10.slice(0, numClusters));
+
+			// Legend setup
+			var legendSpace = 20; // Spacing between legend items
+			var legendRectSize = 14; // The size of the legend color squares
+			var legendHeight = height / 2; // Positioning of the legend
+
+			// Legend labels - adjust these based on your actual clusters or categories
+			var legendLabels = ["Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5", "Cluster 6", "Cluster 7", "Cluster 8", "Cluster 9", "Cluster 10"];
+
+			// Add one dot in the legend for each name
+			var legend = svg.selectAll("legend")
+				.data(color.range())
+				.enter()
+				.append("g")
+				.attr("transform", function (d, i) { return "translate(0," + i * legendSpace + ")"; });
+
+			// Add the color squares to the legend
+			legend.append("rect")
+				.attr("x", width)
+				.attr("y", 0)
+				.attr("width", legendRectSize)
+				.attr("height", legendRectSize)
+				.style("fill", function (d) { return d; });
+
+			// Add the text labels to the legend
+			legend.append("text")
+				.attr("x", width + legendRectSize * 2)
+				.attr("y", 10)
+				.text(function (d, i) { return legendLabels[i]; });
 
 			svg.append("style")
 				.text(`circle.hidden { fill: #000; fill-opacity: 1; r: 1px; }`);
