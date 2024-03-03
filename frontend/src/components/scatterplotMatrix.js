@@ -181,7 +181,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			cell.call(brush, circle, svg, { padding, size, x, y, columns });
 
 			svg.append("g")
-				.style("font", "bold 10px sans-serif")
+				.style("font", "bold 18px Comic Sans MS")
 				.style("pointer-events", "none")
 				.selectAll("text")
 				.data(columns)
@@ -190,7 +190,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				.attr("x", padding)
 				.attr("y", padding)
 				.attr("dy", ".71em")
-				.text(d => d);
+				.text(d => `Principle Component #${d}`);
 
 			svg.property("value", [])
 		})
