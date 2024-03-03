@@ -26,7 +26,7 @@ function HomePage() {
 				<Grid xs={12} item={true} alignItems="center" justifyContent="center">
 					<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange}/>
 					<Biplot numClusters={numClusters} />
-					<KMeansBarChart handleNumClusterChange={handleNumClusterChange} />
+					<KMeansBarChart numClusters={numClusters} handleNumClusterChange={handleNumClusterChange} />
 					<ScatterplotMatrix numClusters={numClusters} numPrincipleComponents={intrinsicDimensionalityIndex}/>
 					{/* {chartType === 'screePlot' && <ScreePlot />}
 					{chartType === 'biPlot' && <Biplot />}

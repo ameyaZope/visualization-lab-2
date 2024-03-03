@@ -78,6 +78,8 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.style('color', '#fff')
 				.text('a simple tooltip');
 
+			let isTransitioning = false;
+
 			// Bars
 			svg.selectAll("mybar")
 				.data(screePlotData['eigenvalues'])
@@ -101,7 +103,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 							`<div>Eigenvalue: ${data}</div>`
 						)
 						.style('visibility', 'visible');
-					d3.select(this).transition().attr('fill', '#eec42d');
+					d3.select(this).attr('fill', '#eec42d');
 				})
 				.on('mousemove', function (d) {
 					tooltip
@@ -110,8 +112,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				})
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).transition().attr('fill', (d) => {
-						let currBarNum = 0;
+					d3.select(this).attr('fill', (d) => {
 						for (let i = 0; i < screePlotData['eigenvalues'].length; i++) {
 							if (d == screePlotData['eigenvalues'][i]) {
 								if (i + 1 == intrinsicDimensionalityIndex) {
@@ -124,9 +125,9 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 						}
 					});
 				})
-				.on('click', function (event) {
+				.on('click', function (event, d) {
 					for(let i=0;i<screePlotData['eigenvalues'].length;i++) {
-						if(screePlotData['eigenvalues'][i]==event['srcElement']['__data__']) {
+						if (screePlotData['eigenvalues'][i] == d) {
 							handleIntrinsicDimensionalityIndexChange(i+1);
 						}
 					}
@@ -138,7 +139,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.duration(800)
 				.delay((d, i) => { return i * 20 })
 				.attr("y", d => { return y(d) })
-				.attr("height", d => height - y(d));
+				.attr("height", d => { return height - y(d) });
 		})
 
 	}, [intrinsicDimensionalityIndex])

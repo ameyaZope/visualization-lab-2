@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
-function KMeansBarChart({handleNumClusterChange}) {
+function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 	const kMeansBarChartSvgRef = useRef();
 
 	useEffect(() => {
@@ -86,7 +86,14 @@ function KMeansBarChart({handleNumClusterChange}) {
 				.join("rect")
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
-				.attr("fill", "steelblue")
+				.attr("fill", (d, i) => {
+					if ((i + 1) == numClusters) {
+						return 'crimson'
+					}
+					else {
+						return 'steelblue'
+					}
+				})
 				// no bar at the beginning thus:
 				.attr("height", d => height - y(0)) // always equal to 0
 				.attr("y", d => y(0))
@@ -96,7 +103,7 @@ function KMeansBarChart({handleNumClusterChange}) {
 							`<div>Eigenvalue: ${data}</div>`
 						)
 						.style('visibility', 'visible');
-					d3.select(this).transition().attr('fill', '#eec42d');
+					d3.select(this).attr('fill', '#eec42d');
 				})
 				.on('mousemove', function (d) {
 					tooltip
@@ -105,14 +112,24 @@ function KMeansBarChart({handleNumClusterChange}) {
 				})
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).transition().attr('fill', 'steelblue');
+					d3.select(this).attr('fill', (d) => {
+						for (let i = 0; i < kmeans_intertia_list.length; i++) {
+							if (d == kmeans_intertia_list[i]) {
+								if ((i + 1) == numClusters) {
+									return 'crimson'
+								}
+								else {
+									return 'steelblue'
+								}
+							}
+						}
+					});
 				})
 				.on('click', function (event, d) {
 					// Define the action to be taken on click. For example, display an alert with the data point value.
-					let srcYVal = event['srcElement']['__data__']
-					for(let i=0;i<kmeans_intertia_list.length;i++) {
-						if(srcYVal==kmeans_intertia_list[i]) {
-							handleNumClusterChange(i+1);
+					for (let i = 0; i < kmeans_intertia_list.length; i++) {
+						if (d == kmeans_intertia_list[i]) {
+							handleNumClusterChange(i + 1);
 						}
 					}
 				})
@@ -126,7 +143,7 @@ function KMeansBarChart({handleNumClusterChange}) {
 				.attr("height", d => height - y(d));
 		})
 
-	}, [])
+	}, [numClusters])
 
 	return (
 		<svg width={600} height={600} id='screePlot' ref={kMeansBarChartSvgRef} />
