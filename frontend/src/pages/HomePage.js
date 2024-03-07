@@ -33,7 +33,7 @@ function HomePage() {
 					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
 						<KMeansBarChart numClusters={numClusters} handleNumClusterChange={handleNumClusterChange} />
 					</Grid>
-					<Grid item xs={6} style={{ height: '350px', width: '400px' }}> {/* Adjust height as needed */}
+					<Grid item xs={6} style={{ height: '400px', width: '500px' }}> {/* Adjust height as needed */}
 						<ScatterplotMatrix numClusters={numClusters} numPrincipleComponents={intrinsicDimensionalityIndex} />
 					</Grid>
 				</Grid>

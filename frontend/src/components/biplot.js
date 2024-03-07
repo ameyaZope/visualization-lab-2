@@ -28,6 +28,7 @@ function Biplot({ numClusters = 3 }) {
 			.attr("text-anchor", "middle")
 			.style("font-size", "20px")
 			.style("text-decoration", "underline")
+			.style("font", "bold 16px Comic Sans MS")
 			.text(`PCA Based Biplot`);
 
 		d3.json('/apis/pca/biPlotData').then((biPlotData) => {
@@ -50,6 +51,7 @@ function Biplot({ numClusters = 3 }) {
 			svg.append("text")
 				.attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text(`Principle Component 1`);
 
 			var minY = 10, maxY = 0;
@@ -70,6 +72,7 @@ function Biplot({ numClusters = 3 }) {
 				.attr("x", 0 - (height / 2))
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text("Principle Component 2");
 
 			var tooltip = d3
@@ -161,6 +164,7 @@ function Biplot({ numClusters = 3 }) {
 			legend.append("text")
 				.attr("x", width + 30)
 				.attr("y", 10)
+				.style("font", "bold 16px Comic Sans MS")
 				.text(function (d, i) { return legendLabels[i]; });
 		})
 

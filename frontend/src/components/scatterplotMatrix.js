@@ -11,11 +11,11 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 
 		d3.json('/apis/pca/scatterplotMatrix').then(data => {
 			const width = 380;
-			const height = 350;
+			const height = 400;
 			const padding = 28;
 			const columns = [1, 2, 3, 4, 5, 6, 7].slice(0, numPrincipleComponents)
-			const size = (width - (columns.length + 1) * padding) / columns.length + padding;
-			const margin = { top: 10, right: 100, bottom: 50, left: 20 }
+			const size = (380 - (columns.length + 1) * padding) / columns.length + padding;
+			const margin = { top: 10, right: 100, bottom: 60, left: 20 }
 
 			// Define the horizontal scales (one for each row).
 			const x = columns.map(c => d3.scaleLinear()
@@ -92,6 +92,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			legend.append("text")
 				.attr("x", width + legendRectSize * 2)
 				.attr("y", 10)
+				.style("font", "bold 16px Comic Sans MS")
 				.text(function (d, i) { return legendLabels[i]; });
 
 			svg.append("style")
@@ -102,7 +103,6 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 
 			svg.append("g")
 				.call(yAxis);
-
 
 			const cell = svg.append("g")
 				.selectAll("g")
@@ -137,8 +137,6 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				.attr("r", 3.5)
 				.attr("fill-opacity", 0.7)
 				.attr("fill", (d) => { return color(d['clusters'][numClusters-1]) });
-
-
 
 			//brushing logic 
 			function brush(cell, circle, svg, { padding, size, x, y, columns }) {
@@ -206,7 +204,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 	}, [numClusters, numPrincipleComponents])
 
 	return (
-		<svg width={500} height={350} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
+		<svg width={500} height={400} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
 	)
 }
 

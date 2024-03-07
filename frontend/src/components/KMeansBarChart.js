@@ -27,8 +27,8 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 			.attr("x", width / 2)
 			.attr("y", 0 - (margin.top / 2))
 			.attr("text-anchor", "middle")
-			.style("font-size", "20px")
 			.style("text-decoration", "underline")
+			.style("font", "bold 16px Comic Sans MS")
 			.text(`K Means`);
 		d3.json('/apis/pca/kMeansData').then((kMeansData) => {
 			var kmeans_intertia_list = []
@@ -50,6 +50,7 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 			svg.append("text")
 				.attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text(`Number of Clusters`);
 
 			const y = d3.scaleLinear()
@@ -65,6 +66,7 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 				.attr("x", 0 - (height / 2))
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text("MSE");
 
 			var tooltip = d3

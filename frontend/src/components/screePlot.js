@@ -27,8 +27,8 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 			.attr("x", width / 2)
 			.attr("y", 0 - (margin.top / 2))
 			.attr("text-anchor", "middle")
-			.style("font-size", "20px")
 			.style("text-decoration", "underline")
+			.style("font", "bold 16px Comic Sans MS")
 			.text(`Scree Plot`);
 
 		d3.json('/apis/pca/sceePlotData').then((data) => {
@@ -54,6 +54,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 			svg.append("text")
 				.attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text(`Principle Component`);
 
 			const maxY = Math.max(...cumulativeExplainedVariances); // NEW: Adjust domain to include cumulative max
@@ -70,6 +71,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("x", 0 - (height / 2))
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
+				.style("font", "bold 16px Comic Sans MS")
 				.text("Explained Variance Ratio");
 
 			var tooltip = d3
