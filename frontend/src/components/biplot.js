@@ -5,9 +5,9 @@ function Biplot({ numClusters = 3 }) {
 	const biPlotSvgRef = useRef();
 	useEffect(() => {
 		// set the dimensions and margins of the graph
-		const margin = { top: 30, right: 200, bottom: 90, left: 90 },
-			width = 1000 - margin.left - margin.right,
-			height = 500 - margin.top - margin.bottom;
+		const margin = { top: 30, right: 120, bottom: 50, left: 90 },
+			width = 500 - margin.left - margin.right,
+			height = 300 - margin.top - margin.bottom;
 
 		// below line clears the svg so that next graph can be drawn on it, 
 		// else there is overlap of graphs
@@ -167,7 +167,7 @@ function Biplot({ numClusters = 3 }) {
 	}, [numClusters]);
 
 	return (
-		<svg width={1000} height={600} id='biPlot' ref={biPlotSvgRef} />
+		<svg width={700} height={300} id='biPlot' ref={biPlotSvgRef} />
 	)
 }
 

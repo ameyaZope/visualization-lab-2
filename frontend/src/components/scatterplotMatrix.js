@@ -10,12 +10,12 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 	useEffect(() => {
 
 		d3.json('/apis/pca/scatterplotMatrix').then(data => {
-			const width = 928;
-			const height = width;
+			const width = 380;
+			const height = 350;
 			const padding = 28;
 			const columns = [1, 2, 3, 4, 5, 6, 7].slice(0, numPrincipleComponents)
 			const size = (width - (columns.length + 1) * padding) / columns.length + padding;
-			const margin = { top: 30, right: 100, bottom: 90, left: 90 }
+			const margin = { top: 10, right: 100, bottom: 50, left: 20 }
 
 			// Define the horizontal scales (one for each row).
 			const x = columns.map(c => d3.scaleLinear()
@@ -122,14 +122,23 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				d3.select(this).selectAll("circle")
 					.data(data['display_data'])
 					.join("circle")
-					.attr("cx", (d) => { return x[i](d['pcs'][columns[i] - 1]) })
+					.attr("cx", (d) => { return x[i](0) })
 					.attr("cy", (d) => { return y[j](d['pcs'][columns[j] - 1]) });
+
+				d3.select(this).selectAll("circle")
+					.transition()
+					.delay(function (d, ii) { return (ii * 3) })
+					.duration(2000)
+					.attr("cx", (d) => { return x[i](d['pcs'][columns[i] - 1]) })
+					.attr("cy", (d) => { return y[j](d['pcs'][columns[j] - 1]) })
 			});
 
 			const circle = cell.selectAll("circle")
 				.attr("r", 3.5)
 				.attr("fill-opacity", 0.7)
 				.attr("fill", (d) => { return color(d['clusters'][numClusters-1]) });
+
+
 
 			//brushing logic 
 			function brush(cell, circle, svg, { padding, size, x, y, columns }) {
@@ -181,7 +190,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			cell.call(brush, circle, svg, { padding, size, x, y, columns });
 
 			svg.append("g")
-				.style("font", "bold 18px Comic Sans MS")
+				.style("font", "bold 16px Comic Sans MS")
 				.style("pointer-events", "none")
 				.selectAll("text")
 				.data(columns)
@@ -190,14 +199,14 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				.attr("x", padding)
 				.attr("y", padding)
 				.attr("dy", ".71em")
-				.text(d => `Principle Component #${d}`);
+				.text(d => `PC #${d}`);
 
 			svg.property("value", [])
 		})
 	}, [numClusters, numPrincipleComponents])
 
 	return (
-		<svg width={1500} height={1000} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
+		<svg width={500} height={350} id='scatterplotMatrix' ref={scatterplotMatrixSvgRef} />
 	)
 }
 

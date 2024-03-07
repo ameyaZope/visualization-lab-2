@@ -6,9 +6,9 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 
 	useEffect(() => {
 		// set the dimensions and margins of the graph
-		const margin = { top: 30, right: 30, bottom: 90, left: 90 },
+		const margin = { top: 30, right: 30, bottom: 50, left: 90 },
 			width = 500 - margin.left - margin.right,
-			height = 500 - margin.top - margin.bottom;
+			height = 300 - margin.top - margin.bottom;
 
 		// below line clears the svg so that next graph can be drawn on it, 
 		// else there is overlap of graphs
@@ -146,7 +146,7 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 	}, [numClusters])
 
 	return (
-		<svg width={600} height={600} id='screePlot' ref={kMeansBarChartSvgRef} />
+		<svg width={600} height={300} id='screePlot' ref={kMeansBarChartSvgRef} />
 	)
 }
 

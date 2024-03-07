@@ -1,6 +1,6 @@
 import { Container, Grid } from "@mui/material";
-import Biplot from "components/biplot";
 import KMeansBarChart from "components/KMeansBarChart";
+import Biplot from "components/biplot";
 import ScatterplotMatrix from "components/scatterplotMatrix";
 import ScreePlot from "components/screePlot";
 import * as React from 'react';
@@ -21,20 +21,25 @@ function HomePage() {
 	}
 
 	return (
-		<Container>
-			<Grid>
-				<Grid xs={12} item={true} alignItems="center" justifyContent="center">
-					<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange}/>
-					<Biplot numClusters={numClusters} />
-					<KMeansBarChart numClusters={numClusters} handleNumClusterChange={handleNumClusterChange} />
-					<ScatterplotMatrix numClusters={numClusters} numPrincipleComponents={intrinsicDimensionalityIndex}/>
-					{/* {chartType === 'screePlot' && <ScreePlot />}
-					{chartType === 'biPlot' && <Biplot />}
-					{chartType === 'kMeansBarChart' && <KMeansBarChart />} */}
+		<>
+			<Container>
+				<Grid container spacing={2}>
+					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
+						<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange} />
+					</Grid>
+					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
+						<Biplot numClusters={numClusters} />
+					</Grid>
+					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
+						<KMeansBarChart numClusters={numClusters} handleNumClusterChange={handleNumClusterChange} />
+					</Grid>
+					<Grid item xs={6} style={{ height: '350px', width: '400px' }}> {/* Adjust height as needed */}
+						<ScatterplotMatrix numClusters={numClusters} numPrincipleComponents={intrinsicDimensionalityIndex} />
+					</Grid>
 				</Grid>
-			</Grid>
-		</Container>
-	)
+			</Container>
+		</>
+	);
 };
 
 export default HomePage;

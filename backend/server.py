@@ -49,7 +49,7 @@ def hello_world():
 @app.route("/apis/pca/sceePlotData", methods=['GET'])
 def get_pca_scree_plot_data():
     return {
-        'eigenvalues': pca.explained_variance_.tolist()
+        'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
     }
 
 

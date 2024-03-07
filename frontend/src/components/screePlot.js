@@ -6,9 +6,9 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 	const screePlotSvgRef = useRef();
 	useEffect(() => {
 		// set the dimensions and margins of the graph
-		const margin = { top: 30, right: 30, bottom: 90, left: 90 },
+		const margin = { top: 30, right: 30, bottom: 50, left: 90 },
 			width = 500 - margin.left - margin.right,
-			height = 500 - margin.top - margin.bottom;
+			height = 300 - margin.top - margin.bottom;
 
 		// below line clears the svg so that next graph can be drawn on it, 
 		// else there is overlap of graphs
@@ -31,9 +31,16 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 			.style("text-decoration", "underline")
 			.text(`Scree Plot`);
 
-		d3.json('/apis/pca/sceePlotData').then((screePlotData) => {
+		d3.json('/apis/pca/sceePlotData').then((data) => {
+			// Calculate the cumulative explained variance
+			const cumulativeExplainedVariances = data['explained_variance_ratio'].reduce((acc, curr, i) => {
+				if (i === 0) acc.push(curr);
+				else acc.push(curr + acc[i - 1]);
+				return acc;
+			}, []);
+
 			const x = d3.scaleBand()
-				.domain(d3.range(1, screePlotData['eigenvalues'].length + 1))
+				.domain(d3.range(1, data['explained_variance_ratio'].length + 1))
 				.range([0, width])
 				.padding(0.2);
 
@@ -49,10 +56,10 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.style("text-anchor", "middle")
 				.text(`Principle Component`);
 
+			const maxY = Math.max(...cumulativeExplainedVariances); // NEW: Adjust domain to include cumulative max
 			const y = d3.scaleLinear()
-				.domain([0,
-					screePlotData['eigenvalues'][0] * 1.3])
-				.range([height, 0])
+				.domain([0, maxY])
+				.range([height, 0]);
 			const yAxis = svg.append('g')
 				.transition()
 				.duration(1000)
@@ -63,7 +70,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("x", 0 - (height / 2))
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
-				.text("Eigen Values");
+				.text("Explained Variance Ratio");
 
 			var tooltip = d3
 				.select('body')
@@ -82,7 +89,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Bars
 			svg.selectAll("mybar")
-				.data(screePlotData['eigenvalues'])
+				.data(data['explained_variance_ratio'])
 				.join("rect")
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
@@ -113,8 +120,8 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
 					d3.select(this).attr('fill', (d) => {
-						for (let i = 0; i < screePlotData['eigenvalues'].length; i++) {
-							if (d == screePlotData['eigenvalues'][i]) {
+						for (let i = 0; i < data['explained_variance_ratio'].length; i++) {
+							if (d == data['explained_variance_ratio'][i]) {
 								if (i + 1 == intrinsicDimensionalityIndex) {
 									return "crimson"
 								}
@@ -126,8 +133,8 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 					});
 				})
 				.on('click', function (event, d) {
-					for(let i=0;i<screePlotData['eigenvalues'].length;i++) {
-						if (screePlotData['eigenvalues'][i] == d) {
+					for (let i = 0; i < data['explained_variance_ratio'].length; i++) {
+						if (data['explained_variance_ratio'][i] == d) {
 							handleIntrinsicDimensionalityIndexChange(i+1);
 						}
 					}
@@ -140,12 +147,67 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.delay((d, i) => { return i * 20 })
 				.attr("y", d => { return y(d) })
 				.attr("height", d => { return height - y(d) });
+
+			// Create a line generator
+			const line = d3.line()
+				.x((d, i) => x(i + 1) + x.bandwidth() / 2) // Position in the center of the bars
+				.y(d => y(d));
+
+			// Add the cumulative explained variance line to the plot
+			svg.append("path")
+				.datum(cumulativeExplainedVariances) // Bind cumulative data
+				.attr("fill", "none")
+				.attr("stroke", "red")
+				.attr("stroke-width", 1.5)
+				.attr("d", line);
+
+			// Add dots for each point on the cumulative variance line
+			svg.selectAll(".dot")
+				.data(cumulativeExplainedVariances)
+				.enter().append("circle") // Uses the enter().append() method
+				.attr("class", "dot") // Assign a class for styling
+				.attr("cx", (d, i) => x(i + 1) + x.bandwidth() / 2)
+				.attr("cy", d => y(d))
+				.attr("r", 5) // Radius size, could be adjusted
+				.style("fill", "yellow") // Fill color
+				.style("stroke", "black") // Border color
+				.on('mouseover', function (event, d) {
+					d3.select(this).style("fill", "purple").style('opacity', 0.7);
+					tooltip
+						.html(
+							`<div>PC: ${cumulativeExplainedVariances.indexOf(d) + 1}<br/> Value: ${d.toFixed(4)}</div>`
+						)
+						.style('visibility', 'visible');
+
+					// NEW: Add a dashed vertical line
+					svg.append("line")
+						.attr("class", "hover-line") // Use a class to easily remove it later
+						.attr("x1", x(cumulativeExplainedVariances.indexOf(d) + 1) + x.bandwidth() / 2)
+						.attr("x2", x(cumulativeExplainedVariances.indexOf(d) + 1) + x.bandwidth() / 2)
+						.attr("y1", y(d))
+						.attr("y2", height)
+						.attr("stroke", "black")
+						.attr("stroke-width", 1)
+						.style("stroke-dasharray", ("3, 3"));
+					d3.select(this).attr('fill', '#eec42d');
+				})
+				.on('mousemove', function (d) {
+					tooltip
+						.style('top', d.pageY - 10 + 'px')
+						.style('left', d.pageX + 10 + 'px');
+				})
+				.on("mouseout", function (d) {
+					tooltip.html(``).style('visibility', 'hidden');
+					// Remove the dashed line on mouseout
+					svg.selectAll(".hover-line").remove();
+					d3.select(this).style("fill", "yellow").style('opacity', 0.7);
+				});
 		})
 
 	}, [intrinsicDimensionalityIndex])
 
 	return (
-		<svg width={600} height={600} id='screePlot' ref={screePlotSvgRef} />
+		<svg width={600} height={300} id='screePlot' ref={screePlotSvgRef} />
 	)
 }
 
