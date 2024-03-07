@@ -29,7 +29,6 @@ for k in range(1, 11, 1):
         {'k': k, 'kmeans_intertia': kmeans.inertia_, 'km_pred': km_pred.tolist()})
 
 biplot_display_data = []
-pca_com_list = pca.components_.tolist()
 print("PCA_Components size " + str(pca.components_.size))
 for i in range(0, len(pca_components), 1):
     kmd = []
@@ -50,6 +49,7 @@ def hello_world():
 def get_pca_scree_plot_data():
     return {
         'explained_variance_ratio': pca.explained_variance_ratio_.tolist(),
+        'loadings': pca.components_.tolist()
     }
 
 
@@ -73,7 +73,8 @@ def get_pca_k_means_data():
 @app.route("/apis/pca/scatterplotMatrix", methods=['GET'])
 def get_pca_scatterplot_matrix_data():
     return {
-        'display_data': biplot_display_data
+        'display_data': biplot_display_data,
+        'loadings': pca.components_.tolist()
     }
 
 

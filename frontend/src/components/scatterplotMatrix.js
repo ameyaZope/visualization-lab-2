@@ -10,10 +10,32 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 	useEffect(() => {
 
 		d3.json('/apis/pca/scatterplotMatrix').then(data => {
+			const loadings = data['loadings'].slice(0, numPrincipleComponents)
+			const squared_sum_loadings = [0, 0, 0, 0, 0, 0, 0]
+			for (let i = 0; i < 7; i++) {
+				for (let j = 0; j < loadings.length; j++) {
+					squared_sum_loadings[i] += loadings[j][i] * loadings[j][i];
+				}
+			}
+			const squared_sum_loadings_map_list = []
+			for (let i = 0; i < squared_sum_loadings.length; i++) {
+				squared_sum_loadings_map_list.push({
+					'feature': i + 1,
+					'squared_sum_loading': squared_sum_loadings[i]
+				})
+			}
+
+			squared_sum_loadings_map_list.sort(
+				(a, b) => b.squared_sum_loading - a.squared_sum_loading);
+			console.log(squared_sum_loadings_map_list)
+
 			const width = 380;
 			const height = 400;
 			const padding = 28;
-			const columns = [1, 2, 3, 4, 5, 6, 7].slice(0, numPrincipleComponents)
+			const columns = [];
+			for(let i=0;i<squared_sum_loadings_map_list.length && i<4;i++) {
+				columns.push(squared_sum_loadings_map_list[i].feature);
+			}
 			const size = (380 - (columns.length + 1) * padding) / columns.length + padding;
 			const margin = { top: 10, right: 100, bottom: 60, left: 20 }
 

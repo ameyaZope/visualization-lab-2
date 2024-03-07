@@ -39,6 +39,104 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				return acc;
 			}, []);
 
+			const loadings = data['loadings'].slice(0, intrinsicDimensionalityIndex)
+			const squared_sum_loadings = [0, 0, 0, 0, 0, 0, 0]
+			for (let i = 0; i < 7; i++) {
+				for (let j = 0; j < loadings.length; j++) {
+					squared_sum_loadings[i] += loadings[j][i] * loadings[j][i];
+				}
+			}
+			const squared_sum_loadings_map_list = []
+			for (let i = 0; i < squared_sum_loadings.length; i++) {
+				squared_sum_loadings_map_list.push({
+					'feature': i + 1,
+					'squared_sum_loading': squared_sum_loadings[i]
+				})
+			}
+
+			squared_sum_loadings_map_list.sort(
+				(a, b) => b.squared_sum_loading - a.squared_sum_loading);
+
+			// Append a group for the table
+			var tableGroup = svg.append("g")
+				.attr("transform", `translate(0,0 )`);
+
+			const top4 = squared_sum_loadings_map_list.slice(0, 4); // Assuming this gives you the top 4 elements
+
+			// Calculate background size
+			const tableHeight = (top4.length + 1) * 20 + 10; // Adjust spacing and padding as necessary
+			const tableWidth = 200; // Adjust based on your content width
+
+			// Draw background rectangle with rounded corners
+			tableGroup.append("rect")
+				.attr("width", tableWidth)
+				.attr("height", 100)
+				.attr("x", 200)
+				.attr("y", 75) // Adjust y position based on title height and padding
+				.attr("rx", 15) // Rounded corner x-axis radius
+				.attr("ry", 15) // Rounded corner y-axis radius
+				.attr("fill", "pink") // Background color
+				.style("stroke", "black") // Border color
+				.style("stroke-width", "2px"); // Border width
+
+			// Title for the table
+			tableGroup.append("text")
+				.attr("x", 300) // Center the title
+				.attr("y", 70)
+				.attr("text-anchor", "middle") // Center align text
+				.style("font", "bold 16px Comic Sans MS")
+				.text("Top Features");
+
+			const headingYOffset = 90; // Adjust as needed based on your layout
+
+			// Append heading line for "Feature" column
+			tableGroup.append("text")
+				.attr("x", 210) // Align with the feature column
+				.attr("y", headingYOffset)
+				.attr("text-anchor", "start") // Align text to the start (left)
+				.style("font", "bold 16px Comic Sans MS")
+				.text("Feature");
+
+			// Append heading line for "Squared Sum Loading" column
+			tableGroup.append("text")
+				.attr("x", 290) // Align with the squared sum loading column, adjust according to your layout
+				.attr("y", headingYOffset)
+				.attr("text-anchor", "start") // Align text to the start (left)
+				.style("font", "bold 16px Comic Sans MS")
+				.text("Squared Sum");
+
+			// Adjust the starting y position of the rows to account for the heading
+			top4.forEach((element, index) => {
+				// Adjust the y position for each row to account for the heading line
+				const rowYPosition = headingYOffset + 20 + (index * 20); // This now includes the headingYOffset
+
+				// Existing code to append rows, with adjusted y positions using rowYPosition
+				// For example:
+				tableGroup.append("text")
+					.attr("x", 240)
+					.attr("y", rowYPosition)
+					.style("font", "bold 16px Comic Sans MS")
+					.text(`${element.feature}`);
+
+				tableGroup.append("text")
+					.attr("x", 310)
+					.attr("y", rowYPosition)
+					.style("font", "bold 16px Comic Sans MS")
+					.text(`${element.squared_sum_loading.toFixed(4)}`);
+
+				if (index < top4.length - 1) { // Add separators between rows, but not after the last row
+					tableGroup.append("line") // Append a line for each separator
+						.attr("x1", 200) // Start of the line (x)
+						.attr("y1", (index + 1) * 20 + 95) // Position the line just below the row of text
+						.attr("x2", 200 + tableWidth) // End of the line (x), spanning the width of the table
+						.attr("y2", (index + 1) * 20 + 95) // Same as y1 for a horizontal line
+						.attr("stroke", "black") // Color of the line
+						.attr("stroke-width", 2); // Thickness of the line
+				}
+			});
+
+
+
 			const x = d3.scaleBand()
 				.domain(d3.range(1, data['explained_variance_ratio'].length + 1))
 				.range([0, width])
@@ -93,6 +191,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 			svg.selectAll("mybar")
 				.data(data['explained_variance_ratio'])
 				.join("rect")
+				.attr("class", "bar")
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
 				.attr("fill", (d, i) => {
@@ -143,7 +242,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				})
 
 			// Animation
-			svg.selectAll("rect")
+			svg.selectAll(".bar")
 				.transition()
 				.duration(800)
 				.delay((d, i) => { return i * 20 })
