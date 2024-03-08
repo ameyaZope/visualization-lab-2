@@ -68,13 +68,13 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Calculate background size
 			const tableHeight = (top4.length + 1) * 20 + 10; // Adjust spacing and padding as necessary
-			const tableWidth = 250; // Adjust based on your content width
+			const tableWidth = 210; // Adjust based on your content width
 
 			// Draw background rectangle with rounded corners
 			tableGroup.append("rect")
 				.attr("width", tableWidth)
 				.attr("height", 100)
-				.attr("x", 150)
+				.attr("x", 190)
 				.attr("y", 75) // Adjust y position based on title height and padding
 				.attr("rx", 15) // Rounded corner x-axis radius
 				.attr("ry", 15) // Rounded corner y-axis radius
@@ -94,7 +94,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Append heading line for "Feature" column
 			tableGroup.append("text")
-				.attr("x", 160) // Align with the feature column
+				.attr("x", 200) // Align with the feature column
 				.attr("y", headingYOffset)
 				.attr("text-anchor", "start") // Align text to the start (left)
 				.style("font", "bold 16px Comic Sans MS")
@@ -102,11 +102,11 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Append heading line for "Squared Sum Loading" column
 			tableGroup.append("text")
-				.attr("x", 275) // Align with the squared sum loading column, adjust according to your layout
+				.attr("x", 340) // Align with the squared sum loading column, adjust according to your layout
 				.attr("y", headingYOffset)
 				.attr("text-anchor", "start") // Align text to the start (left)
 				.style("font", "bold 16px Comic Sans MS")
-				.text("Squared Sum");
+				.text("Sq Sum");
 
 			// Adjust the starting y position of the rows to account for the heading
 			top4.forEach((element, index) => {
@@ -116,29 +116,27 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				// Existing code to append rows, with adjusted y positions using rowYPosition
 				// For example:
 				tableGroup.append("text")
-					.attr("x", 160)
+					.attr("x", 200)
 					.attr("y", rowYPosition)
 					.style("font", "bold 16px Comic Sans MS")
 					.text(`${numeric_column_list[element.feature - 1]}`);
 
 				tableGroup.append("text")
-					.attr("x", 310)
+					.attr("x", 340)
 					.attr("y", rowYPosition)
 					.style("font", "bold 16px Comic Sans MS")
 					.text(`${element.squared_sum_loading.toFixed(4)}`);
 
 				if (index < top4.length - 1) { // Add separators between rows, but not after the last row
 					tableGroup.append("line") // Append a line for each separator
-						.attr("x1", 150) // Start of the line (x)
+						.attr("x1", 190) // Start of the line (x)
 						.attr("y1", (index + 1) * 20 + 95) // Position the line just below the row of text
-						.attr("x2", 150 + tableWidth) // End of the line (x), spanning the width of the table
+						.attr("x2", 190 + tableWidth) // End of the line (x), spanning the width of the table
 						.attr("y2", (index + 1) * 20 + 95) // Same as y1 for a horizontal line
 						.attr("stroke", "black") // Color of the line
 						.attr("stroke-width", 2); // Thickness of the line
 				}
 			});
-
-
 
 			const x = d3.scaleBand()
 				.domain(d3.range(1, data['explained_variance_ratio'].length + 1))
@@ -198,12 +196,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
 				.attr("fill", (d, i) => {
-					if (i + 1 == intrinsicDimensionalityIndex) {
-						return "crimson"
-					}
-					else {
-						return "steelblue"
-					}
+					return "steelblue"
 				})
 				// no bar at the beginning thus:
 				.attr("height", d => height - y(0)) // always equal to 0
@@ -223,25 +216,10 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				})
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).attr('fill', (d) => {
-						for (let i = 0; i < data['explained_variance_ratio'].length; i++) {
-							if (d == data['explained_variance_ratio'][i]) {
-								if (i + 1 == intrinsicDimensionalityIndex) {
-									return "crimson"
-								}
-								else {
-									return "steelblue"
-								}
-							}
-						}
-					});
+					d3.select(this).attr('fill', 'steelblue');
 				})
 				.on('click', function (event, d) {
-					for (let i = 0; i < data['explained_variance_ratio'].length; i++) {
-						if (data['explained_variance_ratio'][i] == d) {
-							handleIntrinsicDimensionalityIndexChange(i+1);
-						}
-					}
+
 				})
 
 			// Animation
@@ -273,7 +251,14 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("cx", (d, i) => x(i + 1) + x.bandwidth() / 2)
 				.attr("cy", d => y(d))
 				.attr("r", 5) // Radius size, could be adjusted
-				.style("fill", "teal") // Fill color
+				.style("fill", (d, i) => {
+					if (i + 1 == intrinsicDimensionalityIndex) {
+						return "crimson"
+					}
+					else {
+						return "steelblue"
+					}
+				}) // Fill color
 				.style("stroke", "black") // Border color
 				.on('mouseover', function (event, d) {
 					d3.select(this).style("fill", "purple").style('opacity', 0.7);
@@ -304,7 +289,25 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 					tooltip.html(``).style('visibility', 'hidden');
 					// Remove the dashed line on mouseout
 					svg.selectAll(".hover-line").remove();
-					d3.select(this).style("fill", "teal").style('opacity', 0.7);
+					d3.select(this).style("fill", (d) => {
+						for (let i = 0; i < cumulativeExplainedVariances.length; i++) {
+							if (d == cumulativeExplainedVariances[i]) {
+								if (i + 1 == intrinsicDimensionalityIndex) {
+									return "crimson"
+								}
+								else {
+									return "steelblue"
+								}
+							}
+						}
+					}).style('opacity', 0.7);
+				})
+				.on('click', function (event, data) {
+					for (let i = 0; i < cumulativeExplainedVariances.length; i++) {
+						if (cumulativeExplainedVariances[i] == data) {
+							handleIntrinsicDimensionalityIndexChange(i + 1);
+						}
+					}
 				});
 		})
 
