@@ -32,6 +32,9 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 			.text(`Scree Plot`);
 
 		d3.json('/apis/pca/sceePlotData').then((data) => {
+			const numeric_column_list = ['instrumentalness', 'acousticness', 'danceability', 'valence',
+				'energy', 'liveness', 'speechiness']
+
 			// Calculate the cumulative explained variance
 			const cumulativeExplainedVariances = data['explained_variance_ratio'].reduce((acc, curr, i) => {
 				if (i === 0) acc.push(curr);
@@ -65,13 +68,13 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Calculate background size
 			const tableHeight = (top4.length + 1) * 20 + 10; // Adjust spacing and padding as necessary
-			const tableWidth = 200; // Adjust based on your content width
+			const tableWidth = 250; // Adjust based on your content width
 
 			// Draw background rectangle with rounded corners
 			tableGroup.append("rect")
 				.attr("width", tableWidth)
 				.attr("height", 100)
-				.attr("x", 200)
+				.attr("x", 150)
 				.attr("y", 75) // Adjust y position based on title height and padding
 				.attr("rx", 15) // Rounded corner x-axis radius
 				.attr("ry", 15) // Rounded corner y-axis radius
@@ -81,7 +84,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Title for the table
 			tableGroup.append("text")
-				.attr("x", 300) // Center the title
+				.attr("x", 275) // Center the title
 				.attr("y", 70)
 				.attr("text-anchor", "middle") // Center align text
 				.style("font", "bold 16px Comic Sans MS")
@@ -91,7 +94,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Append heading line for "Feature" column
 			tableGroup.append("text")
-				.attr("x", 210) // Align with the feature column
+				.attr("x", 160) // Align with the feature column
 				.attr("y", headingYOffset)
 				.attr("text-anchor", "start") // Align text to the start (left)
 				.style("font", "bold 16px Comic Sans MS")
@@ -99,7 +102,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 			// Append heading line for "Squared Sum Loading" column
 			tableGroup.append("text")
-				.attr("x", 290) // Align with the squared sum loading column, adjust according to your layout
+				.attr("x", 275) // Align with the squared sum loading column, adjust according to your layout
 				.attr("y", headingYOffset)
 				.attr("text-anchor", "start") // Align text to the start (left)
 				.style("font", "bold 16px Comic Sans MS")
@@ -113,10 +116,10 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				// Existing code to append rows, with adjusted y positions using rowYPosition
 				// For example:
 				tableGroup.append("text")
-					.attr("x", 240)
+					.attr("x", 160)
 					.attr("y", rowYPosition)
 					.style("font", "bold 16px Comic Sans MS")
-					.text(`${element.feature}`);
+					.text(`${numeric_column_list[element.feature - 1]}`);
 
 				tableGroup.append("text")
 					.attr("x", 310)
@@ -126,9 +129,9 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 
 				if (index < top4.length - 1) { // Add separators between rows, but not after the last row
 					tableGroup.append("line") // Append a line for each separator
-						.attr("x1", 200) // Start of the line (x)
+						.attr("x1", 150) // Start of the line (x)
 						.attr("y1", (index + 1) * 20 + 95) // Position the line just below the row of text
-						.attr("x2", 200 + tableWidth) // End of the line (x), spanning the width of the table
+						.attr("x2", 150 + tableWidth) // End of the line (x), spanning the width of the table
 						.attr("y2", (index + 1) * 20 + 95) // Same as y1 for a horizontal line
 						.attr("stroke", "black") // Color of the line
 						.attr("stroke-width", 2); // Thickness of the line
@@ -270,7 +273,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("cx", (d, i) => x(i + 1) + x.bandwidth() / 2)
 				.attr("cy", d => y(d))
 				.attr("r", 5) // Radius size, could be adjusted
-				.style("fill", "yellow") // Fill color
+				.style("fill", "teal") // Fill color
 				.style("stroke", "black") // Border color
 				.on('mouseover', function (event, d) {
 					d3.select(this).style("fill", "purple").style('opacity', 0.7);
@@ -301,7 +304,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 					tooltip.html(``).style('visibility', 'hidden');
 					// Remove the dashed line on mouseout
 					svg.selectAll(".hover-line").remove();
-					d3.select(this).style("fill", "yellow").style('opacity', 0.7);
+					d3.select(this).style("fill", "teal").style('opacity', 0.7);
 				});
 		})
 

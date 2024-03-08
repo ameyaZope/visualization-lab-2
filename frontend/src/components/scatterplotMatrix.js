@@ -10,6 +10,9 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 	useEffect(() => {
 
 		d3.json('/apis/pca/scatterplotMatrix').then(data => {
+			const numeric_column_list = ['instrumentalness', 'acousticness', 'danceability', 'valence',
+				'energy', 'liveness', 'speechiness']
+
 			const loadings = data['loadings'].slice(0, numPrincipleComponents)
 			const squared_sum_loadings = [0, 0, 0, 0, 0, 0, 0]
 			for (let i = 0; i < 7; i++) {
@@ -156,7 +159,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			});
 
 			const circle = cell.selectAll("circle")
-				.attr("r", 3.5)
+				.attr("r", 2)
 				.attr("fill-opacity", 0.7)
 				.attr("fill", (d) => { return color(d['clusters'][numClusters-1]) });
 
@@ -216,10 +219,10 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				.data(columns)
 				.join("text")
 				.attr("transform", (d, i) => `translate(${i * size},${i * size})`)
-				.attr("x", padding)
+				.attr("x", padding - 15)
 				.attr("y", padding)
 				.attr("dy", ".71em")
-				.text(d => `PC #${d}`);
+				.text(d => `${numeric_column_list[d - 1]}`);
 
 			svg.property("value", [])
 		})
