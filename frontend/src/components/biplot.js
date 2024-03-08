@@ -9,6 +9,9 @@ function Biplot({ numClusters = 3, component1 = 0, component2 = 1 }) {
 			width = 500 - margin.left - margin.right,
 			height = 300 - margin.top - margin.bottom;
 
+		const numeric_column_list = ['instrumentalness', 'acousticness', 'danceability', 'valence',
+			'energy', 'liveness', 'speechiness']
+
 		// below line clears the svg so that next graph can be drawn on it, 
 		// else there is overlap of graphs
 		var svgSelected = d3.select("#biPlot");
@@ -113,7 +116,7 @@ function Biplot({ numClusters = 3, component1 = 0, component2 = 1 }) {
 				.on('mouseover', function (event, data) {
 					tooltip
 						.html(
-							`<div> "PC"${(component1 + 1)} : ${data['pcs'][component1]} <br> "PC"${(component2 + 1)} : ${data['pcs'][component2]} </div>`
+							`<div> PC${(component1 + 1)} : ${data['pcs'][component1]} <br> PC${(component2 + 1)} : ${data['pcs'][component2]} </div>`
 						)
 						.style('visibility', 'visible');
 					d3.select(this).style('fill', 'black');
@@ -164,6 +167,22 @@ function Biplot({ numClusters = 3, component1 = 0, component2 = 1 }) {
 				.attr("y", 10)
 				.style("font", "bold 16px Comic Sans MS")
 				.text(function (d, i) { return legendLabels[i]; });
+
+			for (let i = 0; i < numeric_column_list.length; i++) {
+				svg.append("line")
+					.attr("x1", x(0))
+					.attr("y1", y(0))
+					.attr("x2", x(4 * biPlotData['loadings'][component1][i]))
+					.attr("y2", y(4 * biPlotData['loadings'][component2][i]))
+					.attr("stroke", "black")
+					.attr("stroke-width", 2);
+
+				svg.append("text")
+					.attr("x", x(4 * biPlotData['loadings'][component1][i]))
+					.attr("y", y(4 * biPlotData['loadings'][component2][i]))
+					.style("font", "bold 16px Comic Sans MS")
+					.text(numeric_column_list[i])
+			}
 		})
 
 	}, [numClusters, component1, component2]);

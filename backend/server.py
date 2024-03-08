@@ -59,7 +59,8 @@ def get_pca_bi_plot_data():
         'eigenvalues': pca.explained_variance_.tolist(),
         'components': pca_components.tolist(),
         'kmeans_data': kmeans_data,
-        'display_data': biplot_display_data
+        'display_data': biplot_display_data,
+        'loadings': pca.components_.tolist()
     }
 
 
