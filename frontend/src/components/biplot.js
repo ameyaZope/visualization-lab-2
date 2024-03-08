@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
-function Biplot({ numClusters = 3 }) {
+function Biplot({ numClusters = 3, component1 = 0, component2 = 1 }) {
 	const biPlotSvgRef = useRef();
 	useEffect(() => {
 		// set the dimensions and margins of the graph
@@ -34,8 +34,8 @@ function Biplot({ numClusters = 3 }) {
 		d3.json('/apis/pca/biPlotData').then((biPlotData) => {
 			var minX = 10, maxX = 0;
 			for (let i = 0; i < biPlotData['components'].length; i++) {
-				minX = Math.min(minX, biPlotData['components'][i][0])
-				maxX = Math.max(maxX, biPlotData['components'][i][0])
+				minX = Math.min(minX, biPlotData['components'][i][component1])
+				maxX = Math.max(maxX, biPlotData['components'][i][component1])
 			}
 			const x = d3.scaleLinear()
 				.domain([minX, maxX])
@@ -52,12 +52,12 @@ function Biplot({ numClusters = 3 }) {
 				.attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
 				.style("text-anchor", "middle")
 				.style("font", "bold 16px Comic Sans MS")
-				.text(`Principle Component 1`);
+				.text(`Principle Component ${component1 + 1}`);
 
 			var minY = 10, maxY = 0;
 			for (let i = 0; i < biPlotData['components'].length; i++) {
-				minY = Math.min(minY, biPlotData['components'][i][1])
-				maxY = Math.max(maxY, biPlotData['components'][i][1])
+				minY = Math.min(minY, biPlotData['components'][i][component2])
+				maxY = Math.max(maxY, biPlotData['components'][i][component2])
 			}
 			const y = d3.scaleLinear()
 				.domain([minY, maxY])
@@ -73,7 +73,7 @@ function Biplot({ numClusters = 3 }) {
 				.attr("dy", "1em")
 				.style("text-anchor", "middle")
 				.style("font", "bold 16px Comic Sans MS")
-				.text("Principle Component 2");
+				.text(`Principle Component ${component2 + 1}`);
 
 			var tooltip = d3
 				.select('body')
@@ -100,12 +100,10 @@ function Biplot({ numClusters = 3 }) {
 				.enter()
 				.append("circle")
 				.attr("cx", function (d) {
-					// Return position with optional jitter
 					return x(0);
 				})
 				.attr("cy", function (d) {
-					// Return position with optional jitter
-					return y(d['pcs'][1]);
+					return y(d['pcs'][component2]);
 				})
 				.attr("r", 5)
 				.attr("fill-opacity", 0.7)
@@ -115,7 +113,7 @@ function Biplot({ numClusters = 3 }) {
 				.on('mouseover', function (event, data) {
 					tooltip
 						.html(
-							`<div> ${"PC1"} : ${data['pcs'][0]} <br> ${"PC2"} : ${data['pcs'][1]} </div>`
+							`<div> "PC"${(component1 + 1)} : ${data['pcs'][component1]} <br> "PC"${(component2 + 1)} : ${data['pcs'][component2]} </div>`
 						)
 						.style('visibility', 'visible');
 					d3.select(this).style('fill', 'black');
@@ -134,8 +132,8 @@ function Biplot({ numClusters = 3 }) {
 				.transition()
 				.delay(function (d, i) { return (i * 3) })
 				.duration(2000)
-				.attr("cx", function (d) { return x(d['pcs'][0]); })
-				.attr("cy", function (d) { return y(d['pcs'][1]); })
+				.attr("cx", function (d) { return x(d['pcs'][component1]); })
+				.attr("cy", function (d) { return y(d['pcs'][component2]); })
 
 			// Legend setup
 			var legendSpace = 20; // Spacing between legend items
@@ -168,7 +166,7 @@ function Biplot({ numClusters = 3 }) {
 				.text(function (d, i) { return legendLabels[i]; });
 		})
 
-	}, [numClusters]);
+	}, [numClusters, component1, component2]);
 
 	return (
 		<svg width={700} height={300} id='biPlot' ref={biPlotSvgRef} />

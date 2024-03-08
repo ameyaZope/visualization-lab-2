@@ -2,7 +2,13 @@ import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 
 function ScreePlot({ intrinsicDimensionalityIndex,
-	handleIntrinsicDimensionalityIndexChange }) {
+	handleIntrinsicDimensionalityIndexChange,
+	component1,
+	handleComponent1Change,
+	component2,
+	handleComponent2Change,
+	currAxis = 1,
+	handleCurrAxisChange }) {
 	const screePlotSvgRef = useRef();
 	useEffect(() => {
 		// set the dimensions and margins of the graph
@@ -196,7 +202,10 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.attr("x", (d, i) => { return x(i + 1) })
 				.attr("width", x.bandwidth())
 				.attr("fill", (d, i) => {
-					return "steelblue"
+					if (i == component1 || i == component2) {
+						return "crimson";
+					}
+					else return "steelblue"
 				})
 				// no bar at the beginning thus:
 				.attr("height", d => height - y(0)) // always equal to 0
@@ -216,10 +225,33 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				})
 				.on('mouseout', function () {
 					tooltip.html(``).style('visibility', 'hidden');
-					d3.select(this).attr('fill', 'steelblue');
+					d3.select(this).attr("fill", (d) => {
+						let currBar = 0;
+						for(let i=0;i<data['explained_variance_ratio'].length;i++) {
+							if(data['explained_variance_ratio'][i]==d) {
+								if (i == component1 || i == component2) {
+									return "crimson";
+								}
+								else return "steelblue"
+							}
+						}
+					});
 				})
 				.on('click', function (event, d) {
-
+					let newComponent = 0;
+					for (let i = 0; i < data['explained_variance_ratio'].length; i++) {
+						if (d == data['explained_variance_ratio'][i]) {
+							newComponent = i;
+						}
+					}
+					if (currAxis == 0) {
+						handleComponent1Change(newComponent);
+						handleCurrAxisChange(1);
+					}
+					else {
+						handleComponent2Change(newComponent);
+						handleCurrAxisChange(0);
+					}
 				})
 
 			// Animation
@@ -311,7 +343,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				});
 		})
 
-	}, [intrinsicDimensionalityIndex])
+	}, [intrinsicDimensionalityIndex, component1, component2, currAxis])
 
 	return (
 		<svg width={600} height={300} id='screePlot' ref={screePlotSvgRef} />

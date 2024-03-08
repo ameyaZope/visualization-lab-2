@@ -20,15 +20,37 @@ function HomePage() {
 		setIntrinsicDimensionalityIndex(intrinsicDimensionalityIndex);
 	}
 
+	const [component1, setComponent1] = React.useState(0);
+	const handleComponent1Change = (newComponent1) => {
+		setComponent1(newComponent1)
+	}
+
+	const [component2, setComponent2] = React.useState(1);
+	const handleComponent2Change = (newComponent2) => {
+		setComponent2(newComponent2)
+	}
+
+	const [currAxis, setCurrAxis] = React.useState(0);
+	const handleCurrAxisChange = (newCurrAxis) => {
+		setCurrAxis(newCurrAxis);
+	}
+
 	return (
 		<>
 			<Container>
 				<Grid container spacing={2}>
 					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
-						<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange} />
+						<ScreePlot intrinsicDimensionalityIndex={intrinsicDimensionalityIndex} 
+						handleIntrinsicDimensionalityIndexChange={handleIntrinsicDimensionalityIndexChange} 
+						component1={component1} 
+						handleComponent1Change={handleComponent1Change} 
+						component2={component2} 
+						handleComponent2Change={handleComponent2Change} 
+						currAxis={currAxis}
+						handleCurrAxisChange={handleCurrAxisChange}/>
 					</Grid>
 					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
-						<Biplot numClusters={numClusters} />
+						<Biplot numClusters={numClusters} component1={component1} component2={component2} />
 					</Grid>
 					<Grid item xs={6} style={{ height: '300px', width: '400px' }}> {/* Adjust height as needed */}
 						<KMeansBarChart numClusters={numClusters} handleNumClusterChange={handleNumClusterChange} />
