@@ -213,7 +213,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				.on('mouseover', function (event, data) {
 					tooltip
 						.html(
-							`<div>Eigenvalue: ${data}</div>`
+							`<div>Explained Variance Ratio: ${data}</div>`
 						)
 						.style('visibility', 'visible');
 					d3.select(this).attr('fill', '#eec42d');
@@ -293,7 +293,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 				}) // Fill color
 				.style("stroke", "black") // Border color
 				.on('mouseover', function (event, d) {
-					d3.select(this).style("fill", "purple").style('opacity', 0.7);
+					d3.select(this).style("fill", "purple");
 					tooltip
 						.html(
 							`<div>PC: ${cumulativeExplainedVariances.indexOf(d) + 1}<br/> Value: ${d.toFixed(4)}</div>`
@@ -308,9 +308,8 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 						.attr("y1", y(d))
 						.attr("y2", height)
 						.attr("stroke", "black")
-						.attr("stroke-width", 1)
-						.style("stroke-dasharray", ("3, 3"));
-					d3.select(this).attr('fill', '#eec42d');
+						.attr("stroke-width", 2)
+						.attr("stroke-dasharray", ("10, 3"));
 				})
 				.on('mousemove', function (d) {
 					tooltip
@@ -332,7 +331,7 @@ function ScreePlot({ intrinsicDimensionalityIndex,
 								}
 							}
 						}
-					}).style('opacity', 0.7);
+					});
 				})
 				.on('click', function (event, data) {
 					for (let i = 0; i < cumulativeExplainedVariances.length; i++) {
