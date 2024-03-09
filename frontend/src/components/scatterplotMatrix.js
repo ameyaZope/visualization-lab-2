@@ -39,8 +39,8 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			for(let i=0;i<squared_sum_loadings_map_list.length && i<4;i++) {
 				columns.push(squared_sum_loadings_map_list[i].feature);
 			}
-			const size = (380 - (columns.length + 1) * padding) / columns.length + padding;
-			const margin = { top: 10, right: 100, bottom: 60, left: 20 }
+			const size = (370 - (columns.length + 1) * padding) / columns.length + padding;
+			const margin = { top: 30, right: 100, bottom: 60, left: 20 }
 
 			// Define the horizontal scales (one for each row).
 			const x = columns.map(c => d3.scaleLinear()
@@ -84,6 +84,14 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 				.attr("transform",
 					"translate(" + margin.left + "," + margin.top + ")")
 				.attr("viewBox", [-padding, 0, width, height]);
+
+			svg.append("text")
+				.attr("x", width / 2)
+				.attr("y", 0 - (margin.top / 2))
+				.attr("text-anchor", "middle")
+				.style("text-decoration", "underline")
+				.style("font", "bold 16px Comic Sans MS")
+				.text(`Scatterplot Matrix (SPLOM)`);
 
 			// Define the color scale.
 			const color = d3.scaleOrdinal()
