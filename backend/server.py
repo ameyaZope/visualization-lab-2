@@ -21,12 +21,17 @@ numerical_data = ss.fit_transform(numerical_data)
 pca = PCA().fit(numerical_data)
 pca_components = pca.transform(numerical_data)
 
+df_kmeans = pd.DataFrame()
+df_kmeans.insert(loc=0, column=f'Data Point', value=[x for x in range(0, len(numerical_data))])
 kmeans_data = []
 for k in range(1, 11, 1):
     kmeans = KMeans(n_clusters=k, random_state=66).fit(numerical_data)
     km_pred = kmeans.predict(numerical_data)
+    df_kmeans.insert(loc=len(df_kmeans.columns), column=f'{k}_clusters', value=km_pred)
     kmeans_data.append(
         {'k': k, 'kmeans_intertia': kmeans.inertia_, 'km_pred': km_pred.tolist()})
+
+df_kmeans.to_csv('kmeans_points_vs_clusters.csv', index=False)
 
 biplot_display_data = []
 print("PCA_Components size " + str(pca.components_.size))
