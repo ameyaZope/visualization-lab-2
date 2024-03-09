@@ -167,7 +167,7 @@ function ScatterplotMatrix({ numClusters = 2, numPrincipleComponents = 3 }) {
 			});
 
 			const circle = cell.selectAll("circle")
-				.attr("r", 2)
+				.attr("r", 1)
 				.attr("fill-opacity", 0.7)
 				.attr("fill", (d) => { return color(d['clusters'][numClusters-1]) });
 

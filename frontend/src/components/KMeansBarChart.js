@@ -102,7 +102,7 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 				.on('mouseover', function (event, data) {
 					tooltip
 						.html(
-							`<div>Eigenvalue: ${data}</div>`
+							`<div>MSE: ${data}</div>`
 						)
 						.style('visibility', 'visible');
 					d3.select(this).attr('fill', '#eec42d');
