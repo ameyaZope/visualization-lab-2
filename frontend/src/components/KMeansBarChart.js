@@ -29,7 +29,7 @@ function KMeansBarChart({ numClusters, handleNumClusterChange }) {
 			.attr("text-anchor", "middle")
 			.style("text-decoration", "underline")
 			.style("font", "bold 16px Comic Sans MS")
-			.text(`K Means`);
+			.text(`K Means MSE Plot`);
 		d3.json('/apis/pca/kMeansData').then((kMeansData) => {
 			var kmeans_intertia_list = []
 			for (let i = 0; i < kMeansData['data'].length; i++) {
